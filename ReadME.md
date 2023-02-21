@@ -5,4 +5,3 @@ Frontend part of Foodie App
 ## Language used
 
 Javascript
-
