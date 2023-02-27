@@ -1,9 +1,13 @@
 const User = require('../Models/user.model')
 const Cryptojs = require('crypto-js')
 <<<<<<< HEAD
+<<<<<<< HEAD
 const jwt = require('jsonwebtoken')
 =======
 >>>>>>> e5acdbc (user crud)
+=======
+const jwt = require('jsonwebtoken')
+>>>>>>> a404db2 (user authentication & authorisation)
 
 exports.Register = async(req,res,next)=>{
     try {
@@ -69,6 +73,45 @@ exports.Login = async(req,res,next)=>{
         res.status(500).json({
             success:false
 >>>>>>> e5acdbc (user crud)
+        })
+    }
+}
+
+// login
+exports.Login = async(req,res,next)=>{
+    try {
+        const user = await User.findOne({email:req.body.email})
+        if(!user){
+            return res.status(401).json({
+                success:false,
+                message:"wrong credentials"
+            })
+        }
+
+        const hashedPassword = Cryptojs.AES.decrypt(user.password,process.env.PASS_SEC_KEY)
+        const originalPassword = hashedPassword.toString(Cryptojs.enc.Utf8)
+
+        if(originalPassword != req.body.password){
+            return res.status(401).json({
+                success:false,
+                message:"false to login wrong username or password"
+            })
+        }
+        const accessToken = jwt.sign({
+            id:user._id,
+            isAdmin:user.isAdmin
+        }, process.env.JWT_SECRET,{expiresIn:"2d"})
+
+        const {password,...others} = user._doc
+            res.status(200).json({
+            success:true,
+            data:{...others,accessToken}
+            })
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message:err
         })
     }
 }
