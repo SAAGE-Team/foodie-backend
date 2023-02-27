@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 
 const UserSchema = new mongoose.Schema({
     names:{type:String , required:true },
+<<<<<<< HEAD
     email: {
         type: String,
         required: true,
@@ -32,6 +33,12 @@ const UserSchema = new mongoose.Schema({
     },
     isAdmin:{
         type:Boolean,
+=======
+    telephone:{type:Number , required:true , uniques:true},
+    email:{type:String , required:true , uniques:true},
+    password:{type:String , required:true},
+    isAdmin:{
+>>>>>>> e5acdbc (user crud)
         default:false
     },
     createdAt: {

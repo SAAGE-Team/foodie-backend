@@ -3,6 +3,11 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const { json } = require('express')
 
+
+// routes file
+const User = require('./src/Routes/user.routes')
+
+
 // load env variables 
 dotenv.config()
 
