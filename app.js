@@ -2,8 +2,6 @@ const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
 const { json } = require('express')
-const connectDB = require('./src/config/db')
-
 
 // load env variables 
 dotenv.config()
