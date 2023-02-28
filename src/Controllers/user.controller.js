@@ -5,17 +5,18 @@ const jwt = require('jsonwebtoken')
 exports.Register = async(req,res,next)=>{
     try {
         const hashedPassword = Cryptojs.AES.encrypt(req.body.password , process.env.PASS_SEC_KEY)
-        console.log(hashedPassword);
         req.body.password = hashedPassword
         const user = await User.create(req.body)
         res.status(201).json({
             success:true,
             data:user
         })     
-    } catch (error) {
-        res.status(500).json({
-            success:false
-        })
+    } catch (err) {
+        if (err.name === 'ValidationError') {
+            res.status(400).send(err.message);
+          } else {
+            res.status(500).send(err.message);
+          }
     }
 }
 
@@ -51,31 +52,41 @@ exports.Login = async(req,res,next)=>{
             })
 
     } catch (err) {
-        console.log(err);
         res.status(500).json({
-            message:err
+            success:false,
+            error_name :err.name,
+            error:err.message
         })
     }
 }
 
 exports.GetAllUser = async(req,res,next)=>{
-    const users = User.find()
-    if(!users){
-        return res.status(400).json({
-            message:"no users found"
+    try {
+        const users = await User.find()
+        if(!users){
+            return res.status(400).json({
+                message:"no users found"
+            })
+        }
+        res.status(200).json({
+            success:true,
+            data:users
+        })
+    } catch (err) {
+        res.status(500).json({
+            success:false,
+            error_name :err.name,
+            error:err.message
         })
     }
-    res.status(200).json({
-        success:true,
-        data:users
-    })
+   
 }
 
 // get a single user
 
 exports.GetAUser = async (req,res,next)=>{
     try {
-        const user =  await User.findById(req.params.id).toString()
+        const user = await User.findById(req.params.id)
         if(!user){
             return res.status(400).json({
                 message:"no user found!"
@@ -86,9 +97,11 @@ exports.GetAUser = async (req,res,next)=>{
         success:true,
         data:{...others}
         })
-    } catch (error) {
+    } catch (err) {
         res.status(500).json({
-            success:false
+            success:false,
+            error_name :err.name,
+            error:err.message
         })
     }
 }
@@ -104,12 +117,13 @@ exports.DeleteUser = async (req,res,next)=>{
         }
         res.status(200).json({
             success:true,
-            message:"user is deleted successful"
+            message:"user  deleted successful"
         })
-    } catch (error) {
+    } catch (err) {
         res.status(500).json({
             success:false,
-            message:error.message
+            error_name :err.name,
+            error:err.message
         })
     }
 }
@@ -132,11 +146,11 @@ exports.UpdateUser = async (req,res,next)=>{
         data:{...others},
         message:"user updated successfully"
         })
-    } catch (error) {
+    } catch (err) {
         res.status(500).json({
             success:false,
-            message:error.message
+            error_name :err.name,
+            error:err.message
         })
-        console.log(error);
     }
 }
