@@ -70,7 +70,7 @@ exports.VerifyEmail = async (req,res) => {
         return "verification code has expired";
       }
       
-      await User.update({
+      await User.updateOne({
         where: { email },
         data: {
           emailVerified: true,
