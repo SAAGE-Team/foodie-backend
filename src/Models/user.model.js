@@ -34,10 +34,21 @@ const UserSchema = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    emailVerified:{
+      type:Boolean,
+      default:false
+    },
+    emailVerificationCode:{
+      type:String
+    },
+    emailVerificationCodeExpires:{
+      type:Date
+    },
     createdAt: {
         type: Date,
         default: Date.now
       }
 })
+
 
 module.exports = mongoose.model('User',UserSchema)

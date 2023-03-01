@@ -1,16 +1,48 @@
 const User = require('../Models/user.model')
 const Cryptojs = require('crypto-js')
 const jwt = require('jsonwebtoken')
+const generateRandomAlphaNumericCode = require('../Utils/random')
+const sendEmail = require('../Utils/sendEmail')
 
 exports.Register = async(req,res,next)=>{
     try {
         const hashedPassword = Cryptojs.AES.encrypt(req.body.password , process.env.PASS_SEC_KEY)
         req.body.password = hashedPassword
-        const user = await User.create(req.body)
-        res.status(201).json({
-            success:true,
-            data:user
-        })     
+        const code = generateRandomAlphaNumericCode()
+        const user = new User({
+            names: req.body.names,
+            telephone:req.body.telephone,
+            email:req.body.email,
+            password:req.body.password,
+            emailVerificationCode: code,
+            emailVerificationCodeExpires: (Date.now()) + (10 * 60 * 1000)
+        })
+        await user.save()
+        if(user){
+            sendEmail({
+                to:user.email,
+                subject:'Email verification',
+                from:`${process.env.EMAIL_USER}`,
+                text:`
+                <h1>Confirm your email address</h1>
+                  <h2>Your confirmation code is below — enter it in your open browser window and we'll help you get signed in.</h2>
+                  <h2>This code will expire in 10 minutes</h2>
+                  <br>
+                  <h1>${code}</h1>
+                  <br>
+                  <h3>If you didn’t request this email, there’s nothing to worry about — you can safely ignore it.</h3>
+                  <h3>Thanks for using Ederner</h3>
+                
+                `
+            })
+            return res.status(201).json({
+                message:"verificaton code sent to your email"
+            })
+        }else{
+            return res.status(400).json({
+                message:"unable to create user"
+            })
+        }     
     } catch (err) {
         if (err.name === 'ValidationError') {
             res.status(400).send(err.message);
@@ -20,6 +52,40 @@ exports.Register = async(req,res,next)=>{
     }
 }
 
+//verify email
+exports.VerifyEmail = async (req,res) => {
+    try {
+        const { email, code } = req.body;
+      const { emailVerificationCode, emailVerificationCodeExpiresAt } = await User.findOne({ email });
+      
+      if (!emailVerificationCode) {
+        return "email already verified";
+      }
+      
+      if (emailVerificationCode !== code) {
+        return "invalid verification code";
+      }
+      
+      if (emailVerificationCodeExpiresAt && emailVerificationCodeExpiresAt < Date.now()) {
+        return "verification code has expired";
+      }
+      
+      await User.update({
+        where: { email },
+        data: {
+          emailVerified: true,
+          emailVerificationCode: null,
+          emailVerificationCodeExpiresAt: null,
+        },
+      });
+      
+      return "email verified";
+    } catch (error) {
+      console.error(error);
+      return "error verifying email";
+    }
+  };
+  
 // login
 exports.Login = async(req,res,next)=>{
     try {
