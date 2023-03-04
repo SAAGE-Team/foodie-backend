@@ -15,7 +15,7 @@ exports.Register = async(req,res,next)=>{
             email:req.body.email,
             password:req.body.password,
             emailVerificationCode: code,
-            emailVerificationCodeExpires: (Date.now()) + (10 * 60 * 1000)
+            emailVerificationCodeExpiresAt: (Date.now()) + (10 * 60 * 1000)
         })
         await user.save()
         if(user){
@@ -53,39 +53,37 @@ exports.Register = async(req,res,next)=>{
 }
 
 //verify email
-exports.VerifyEmail = async (req,res) => {
-    try {
-        const { email, code } = req.body;
-      const { emailVerificationCode, emailVerificationCodeExpiresAt } = await User.findOne({ email });
-      
-      if (!emailVerificationCode) {
-        return "email already verified";
-      }
-      
-      if (emailVerificationCode !== code) {
-        return "invalid verification code";
-      }
-      
-      if (emailVerificationCodeExpiresAt && emailVerificationCodeExpiresAt < Date.now()) {
-        return "verification code has expired";
-      }
-      
-      await User.updateOne({
-        where: { email },
-        data: {
-          emailVerified: true,
-          emailVerificationCode: null,
-          emailVerificationCodeExpiresAt: null,
-        },
-      });
-      
-      return "email verified";
-    } catch (error) {
-      console.error(error);
-      return "error verifying email";
+exports.VerifyEmail = async (req, res, next) => {
+    const { email, code } = req.body;
+
+  try {
+    // Find the user with the given email and verification code
+    const user = await User.findOne({ email: email, emailVerificationCode: code });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid verification code' });
     }
-  };
+
+    // Check if the verification code has expired (last 10 minutes)
+    if (user.emailVerificationCodeExpiresAt < Date.now()) {
+      return res.status(400).json({ error: 'Verification code has expired' });
+    }
+
+    // Update the user's status to "verified" and delete the verification code
+    user.emailVerified = true;
+    user.emailVerificationCode = undefined;
+    user.emailVerificationCodeExpiresAt = undefined;
+    await user.save();
+
+    return res.json({ message: 'Verification successful' });
+  } catch (error) {
+    console.log('Error occurred:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
   
+   
 // login
 exports.Login = async(req,res,next)=>{
     try {
@@ -126,6 +124,7 @@ exports.Login = async(req,res,next)=>{
     }
 }
 
+// get all users
 exports.GetAllUser = async(req,res,next)=>{
     try {
         const users = await User.find()

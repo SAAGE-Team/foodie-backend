@@ -41,7 +41,7 @@ const UserSchema = new mongoose.Schema({
     emailVerificationCode:{
       type:String
     },
-    emailVerificationCodeExpires:{
+    emailVerificationCodeExpiresAt:{
       type:Date
     },
     createdAt: {
