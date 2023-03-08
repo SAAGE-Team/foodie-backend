@@ -47,7 +47,18 @@ exports.updateOrder = async (req,res) => {
 
 exports.deleteOrder = async (req,res) => {
     try {
+        var order = await Order.findByIdAndDelete(req.params.id);
+        if(!order) {
+            res.status(400).json({
+                success: false,
+                data: "Order does not exist"
+            })
+        }
 
+        res.status(200).json({
+            success: true,
+            data: order
+        })
     }
     catch(err) {
         res.status(500).json({
