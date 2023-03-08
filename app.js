@@ -15,16 +15,23 @@ connectDB()
 
 const User = require('./src/Routes/user.routes')
 
-const products = require('./src/Routes/product.routes')
+const Products = require('./src/Routes/product.routes')
+
+const Orders = require('./src/Routes/orders.routes')
 
 // init.. app
 const app = express()
 app.use(cors())
 app.use(json())
+
+// users testing
 app.use('/api/user',User)
 
 //products testing
-app.use('/api/products',products)
+app.use('/api/products',Products)
+
+//orders testing
+app.use('/api/orders', Orders)
 
 // setting port
 
