@@ -2,7 +2,7 @@ var Order = require('../Models/orders.model')
 
 exports.createOrder = async (req,res) => {
     try {
-        var order = Order.create(req.body)
+        var order = await Order.create(req.body)
         if(order) {
             res.status(201).json({
                 success: true,
@@ -24,7 +24,18 @@ exports.createOrder = async (req,res) => {
 
 exports.updateOrder = async (req,res) => {
     try {
+        var order = await Order.findByIdAndUpdate(req.params.id)
+        if(!order) { 
+            res.status(400).json({
+                success: false,
+                data: "Failed to update order"
+            })
+        }
 
+        res.status(200).json({
+            success: true,
+            data: order
+        })
     }
     catch(err) {
         res.status(500).json({
