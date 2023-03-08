@@ -2,19 +2,12 @@ const Products = require('../Models/product.model')
 
 exports.RegisterProduct = async(req,res) => {
     try {
-        var data = Products.find();
-        if(!data) {
-            var product = Products.create(req.data);
-            res.status(201).json({
-                success: true,
-                data: product
-            })
-        }
-
-        return res.status(400).json({
-            success: false,
-            data: "Product already registered"
+        var product = Products.create(req.body);
+        res.status(201).json({
+            success: true,
+            data: product
         })
+        console.log(product)
     }
     catch(error) {
         res.status(400).send("Server Error!")

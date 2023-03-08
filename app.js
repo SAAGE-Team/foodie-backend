@@ -12,13 +12,19 @@ connectDB()
 
 
 // routes file
+
 const User = require('./src/Routes/user.routes')
+
+const products = require('./src/Routes/product.routes')
 
 // init.. app
 const app = express()
 app.use(cors())
 app.use(json())
 app.use('/api/user',User)
+
+//products testing
+app.use('/api/products',products)
 
 // setting port
 
