@@ -16,7 +16,7 @@ exports.updateOrder = async (req,res) => {
     try {
 
     }
-    catch(err) {'
+    catch(err) {
         res.status(500).json({
             success: false,
             data: err.message
