@@ -1,5 +1,6 @@
 const express = require('express')
 const { Register, UpdateUser, DeleteUser, GetAUser, Login, GetAllUser, VerifyEmail } = require('../Controllers/user.controller')
+const {verifyToken,verifyTokenAndAuthorisation,verifyTokenAndAdmin} = require('../Middleware/user.auth')
 
 const router = express.Router()
 
@@ -8,7 +9,7 @@ router
 .post(Register)
 
 router
-.route('/allusers')
+.route(verifyTokenAndAdmin,'/allusers')
 .get(GetAllUser)
 
 router
@@ -21,7 +22,7 @@ router
 
 router
 .route('/:id')
-.put(UpdateUser)
-.delete(DeleteUser)
-.get(GetAUser)
+.put(verifyTokenAndAuthorisation,UpdateUser)
+.delete(verifyTokenAndAuthorisation,DeleteUser)
+.get(verifyToken,GetAUser)
 module.exports = router
