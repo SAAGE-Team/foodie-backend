@@ -1,5 +1,0 @@
-{
-    "db": {
-        "url" : "mongodb+srv://admin:xbE46Sd2NhGkvgMs@foodie-db.ics1nwe.mongodb.net/?retryWrites=true&w=majority"
-    } 
-}

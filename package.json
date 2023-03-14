@@ -1,0 +1,27 @@
+{
+  "name": "foodie-backend",
+  "version": "1.0.0",
+  "description": "Frontend part of Foodie App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SAAGE-Team/foodie-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SAAGE-Team/foodie-backend/issues"
+  },
+  "homepage": "https://github.com/SAAGE-Team/foodie-backend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.0"
+  }
+}
