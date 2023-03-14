@@ -55,11 +55,11 @@ exports.updateOrder = async (req, res, next) => {
 
 exports.deleteOrder = async (req, res, next) => {
     try {
-        const order = await Order.findById(req.params.id);
+        const order = await Order.findByIdAndDelete(req.params.id);
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
-        await order.remove();
+        // await order.remove();
         res.status(200)
     }
     catch(err) {
