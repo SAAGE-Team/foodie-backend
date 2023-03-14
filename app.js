@@ -6,7 +6,6 @@ const connectDB = require('./src/config/db')
 // load env variables 
 dotenv.config()
 
-
 // connect to database 
 connectDB()
 
@@ -17,7 +16,7 @@ const User = require('./src/Routes/user.routes')
 
 const Products = require('./src/Routes/product.routes')
 
-const Orders = require('./src/Routes/orders.routes')
+const orderRoutes = require('./src/Routes/orders.routes')
 
 // init.. app
 const app = express()
@@ -31,9 +30,8 @@ app.use('/api/user',User)
 app.use('/api/products',Products)
 
 //orders testing
-app.use('/api/orders', Orders)
+app.use('/api/orders', orderRoutes);
 
 // setting port
-
 const PORT = process.env.PORT || 5000
 app.listen(PORT , console.log(`server listening on port ${PORT}...`))
