@@ -3,6 +3,7 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 const { json } = require('express')
 const connectDB = require('./src/config/db')
+const swagger = require('./swagger');
 // load env variables 
 dotenv.config()
 
@@ -22,6 +23,9 @@ const orderRoutes = require('./src/Routes/orders.routes')
 const app = express()
 app.use(cors())
 app.use(json())
+
+// swagger
+swagger(app);
 
 // users testing
 app.use('/api/user',User)
